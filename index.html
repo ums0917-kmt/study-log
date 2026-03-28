@@ -54,7 +54,6 @@
   .sync-dot.syncing { background: var(--accent3); animation: pulse 1s infinite; }
   .sync-dot.error { background: var(--danger); }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
   .tabs {
     display: flex;
     gap: 4px;
@@ -78,11 +77,9 @@
   }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface2); }
   .tab-btn:hover:not(.active) { color: var(--text); background: var(--surface2); }
-
   .container { max-width: 640px; margin: 0 auto; padding: 20px 16px; }
   .panel { display: none; }
   .panel.active { display: block; }
-
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -91,15 +88,7 @@
     margin-bottom: 16px;
     box-shadow: var(--shadow);
   }
-  .card-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 16px;
-  }
-
+  .card-title { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 6px; }
   .field input, .field select, .field textarea {
@@ -114,12 +103,8 @@
     transition: border-color 0.2s;
     outline: none;
   }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: var(--accent2);
-    background: var(--surface);
-  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent2); background: var(--surface); }
   .field textarea { resize: vertical; min-height: 72px; }
-
   .subject-block {
     border: 1.5px solid var(--border);
     border-radius: 10px;
@@ -140,7 +125,6 @@
     flex-shrink: 0;
   }
   .subject-label { font-size: 14px; font-weight: 700; }
-
   .btn {
     padding: 11px 20px;
     border: none;
@@ -154,8 +138,6 @@
     align-items: center;
     gap: 6px;
   }
-  .btn-primary { background: var(--accent); color: white; }
-  .btn-primary:hover { background: #235c41; }
   .btn-secondary { background: var(--surface2); color: var(--text); border: 1.5px solid var(--border); }
   .btn-secondary:hover { background: var(--border); }
   .btn-danger { background: var(--danger); color: white; }
@@ -166,19 +148,9 @@
   .btn-submit:hover { background: #235c41; }
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .btn-delete-sub { position: absolute; top: 12px; right: 12px; }
-
   .star-row { display: flex; gap: 6px; }
-  .star-btn {
-    font-size: 22px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    opacity: 0.3;
-    transition: opacity 0.15s, transform 0.15s;
-    padding: 2px;
-  }
+  .star-btn { font-size: 22px; cursor: pointer; background: none; border: none; opacity: 0.3; transition: opacity 0.15s, transform 0.15s; padding: 2px; }
   .star-btn.active { opacity: 1; transform: scale(1.1); }
-
   .toast {
     position: fixed;
     bottom: 24px;
@@ -197,34 +169,54 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* 削除確認モーダル */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 24px;
+    max-width: 320px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    transform: scale(0.95);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.show .modal { transform: scale(1); }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .modal-body { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
   .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
   .stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; }
   .stat-num { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; color: var(--accent); }
   .stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
-
   .bar-chart { display: flex; flex-direction: column; gap: 10px; }
   .bar-item { display: flex; align-items: center; gap: 10px; }
   .bar-name { font-size: 13px; font-weight: 700; width: 50px; text-align: right; flex-shrink: 0; }
   .bar-track { flex: 1; background: var(--surface2); border-radius: 100px; height: 18px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1); min-width: 4px; }
   .bar-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); width: 36px; flex-shrink: 0; }
-
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal-header { font-size: 11px; font-weight: 700; color: var(--text2); text-align: center; padding: 4px 0; }
-  .cal-day {
-    aspect-ratio: 1;
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 500;
-    background: var(--surface2); color: var(--text2);
-    transition: transform 0.15s;
-  }
+  .cal-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; background: var(--surface2); color: var(--text2); }
   .cal-day.has-record { background: var(--accent); color: white; font-weight: 700; }
   .cal-day.today { outline: 2px solid var(--accent3); outline-offset: -2px; }
   .cal-day.empty { background: none; }
   .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .cal-nav-title { font-size: 15px; font-weight: 700; }
-
   .record-item {
     border-left: 4px solid var(--accent2);
     padding: 12px 14px;
@@ -234,28 +226,29 @@
   }
   .record-item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
   .record-date { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; }
-  .record-subjects { display: flex; flex-wrap: wrap; gap: 6px; }
+  .record-subjects { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
   .subject-tag { background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
   .record-feeling { font-size: 14px; }
   .record-note { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .record-footer { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .btn-delete-record {
+    background: none;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-delete-record:hover { background: var(--danger); color: white; }
   .empty-state { text-align: center; color: var(--text2); padding: 32px; font-size: 14px; }
   .section-title { font-size: 14px; font-weight: 700; color: var(--text2); margin: 20px 0 10px; display: flex; align-items: center; gap: 6px; }
   .badge { background: var(--accent2); color: white; font-size: 10px; padding: 2px 7px; border-radius: 100px; font-weight: 700; }
-
-  .loading {
-    text-align: center;
-    padding: 40px;
-    color: var(--text2);
-    font-size: 14px;
-  }
-  .loading-spinner {
-    width: 32px; height: 32px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 12px;
-  }
+  .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
+  .loading-spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
@@ -288,15 +281,25 @@
   </div>
 </div>
 
+<!-- 削除確認モーダル -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <div class="modal-title">🗑️ 記録を削除しますか？</div>
+    <div class="modal-body" id="delete-modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeDeleteModal()">キャンセル</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete()">削除する</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp }
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ===== Firebase Config =====
 const firebaseConfig = {
   apiKey: "AIzaSyCLhG-MzgCLY7Riy5gaJx6xCTG2NWYXRA8",
   authDomain: "study-log-oshiro.firebaseapp.com",
@@ -309,22 +312,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ===== State =====
 const SUBJECTS = ['国語','数学','英語','理科','社会','その他'];
 const FEELINGS = ['😞','😐','😊','😄','🤩'];
 let records = [];
 let subjectCount = 0;
 let feelings = {};
 let calViewYear, calViewMonth;
+let pendingDeleteId = null;
 
-// ===== Firestore リアルタイム同期 =====
 const q = query(collection(db, "records"), orderBy("timestamp", "desc"));
 onSnapshot(q, (snapshot) => {
-  records = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  records = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   setSynced();
   const activeTab = document.querySelector('.tab-btn.active');
   if (activeTab && activeTab.textContent.includes('ダッシュボード')) renderDashboard();
-  if (document.getElementById('record-list')) renderRecordList();
 }, (err) => {
   setError();
   showToast('⚠️ 接続エラー: ' + err.message);
@@ -339,25 +340,18 @@ function setError() {
   document.getElementById('sync-label').textContent = '接続エラー';
 }
 
-// ===== Tab =====
 window.switchTab = function(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['record','dashboard'][i] === tab);
-  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['record','dashboard'][i] === tab));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
   if (tab === 'dashboard') renderDashboard();
 };
 
-// ===== Form =====
 function buildForm() {
   document.getElementById('record-form-area').innerHTML = `
     <div class="card">
       <div class="card-title">📅 勉強記録を入力</div>
-      <div class="field">
-        <label>日付</label>
-        <input type="date" id="date-input">
-      </div>
+      <div class="field"><label>日付</label><input type="date" id="date-input"></div>
       <div id="subjects-container"></div>
       <button class="btn btn-add" onclick="addSubject()">＋ 教科を追加</button>
       <button class="btn btn-submit" onclick="submitRecord()">✅ 送信</button>
@@ -378,8 +372,7 @@ window.addSubject = function() {
       <div class="subject-label">教科 ${idx}</div>
     </div>
     <button class="btn btn-danger btn-sm btn-delete-sub" onclick="removeSubject(${idx})">✕</button>
-    <div class="field">
-      <label>教科</label>
+    <div class="field"><label>教科</label>
       <select id="subject-${idx}">
         <option value="">選択</option>
         ${SUBJECTS.map(s=>`<option>${s}</option>`).join('')}
@@ -389,40 +382,25 @@ window.addSubject = function() {
       <label>教科名を入力</label>
       <input type="text" id="custom-${idx}" placeholder="例: 音楽">
     </div>
-    <div class="field">
-      <label>やったこと</label>
-      <input type="text" id="content-${idx}" placeholder="例: ワーク3ページ">
-    </div>
-    <div class="field">
-      <label>勉強時間（分）</label>
-      <input type="number" id="minutes-${idx}" min="0" max="600" placeholder="例: 30">
-    </div>
-    <div class="field">
-      <label>達成感</label>
+    <div class="field"><label>やったこと</label><input type="text" id="content-${idx}" placeholder="例: ワーク3ページ"></div>
+    <div class="field"><label>勉強時間（分）</label><input type="number" id="minutes-${idx}" min="0" max="600" placeholder="例: 30"></div>
+    <div class="field"><label>達成感</label>
       <div class="star-row" id="feeling-${idx}">
         ${FEELINGS.map((f,i)=>`<button type="button" class="star-btn" onclick="setFeeling(${idx},${i})">${f}</button>`).join('')}
       </div>
     </div>
-    <div class="field">
-      <label>感想</label>
-      <textarea id="memo-${idx}" placeholder="例: 難しかった、わかりやすかった"></textarea>
-    </div>`;
+    <div class="field"><label>感想</label><textarea id="memo-${idx}" placeholder="例: 難しかった、わかりやすかった"></textarea></div>`;
   document.getElementById('subjects-container').appendChild(div);
   document.getElementById('subject-'+idx).addEventListener('change', function() {
     document.getElementById('custom-wrap-'+idx).style.display = this.value === 'その他' ? 'block' : 'none';
   });
 };
 
-window.removeSubject = function(idx) {
-  const el = document.getElementById('sub-'+idx);
-  if (el) el.remove();
-};
+window.removeSubject = function(idx) { document.getElementById('sub-'+idx)?.remove(); };
 
 window.setFeeling = function(idx, val) {
   feelings[idx] = val;
-  document.querySelectorAll(`#feeling-${idx} .star-btn`).forEach((b,i) => {
-    b.classList.toggle('active', i <= val);
-  });
+  document.querySelectorAll(`#feeling-${idx} .star-btn`).forEach((b,i) => b.classList.toggle('active', i <= val));
 };
 
 window.submitRecord = async function() {
@@ -430,7 +408,6 @@ window.submitRecord = async function() {
   if (!date) { showToast('日付を入力してください'); return; }
   const blocks = document.querySelectorAll('.subject-block');
   if (!blocks.length) { showToast('教科を追加してください'); return; }
-
   const subjectsData = [];
   for (const b of blocks) {
     const idx = b.id.split('-')[1];
@@ -445,45 +422,55 @@ window.submitRecord = async function() {
       memo: document.getElementById('memo-'+idx).value,
     });
   }
-
   try {
     document.getElementById('sync-dot').className = 'sync-dot syncing';
-    await addDoc(collection(db, "records"), {
-      date,
-      subjects: subjectsData,
-      timestamp: serverTimestamp()
-    });
-    // Reset
+    await addDoc(collection(db, "records"), { date, subjects: subjectsData, timestamp: serverTimestamp() });
     document.getElementById('subjects-container').innerHTML = '';
-    subjectCount = 0;
-    feelings = {};
+    subjectCount = 0; feelings = {};
     document.getElementById('date-input').value = getTodayStr();
     addSubject();
     showToast('✅ 記録を保存しました！');
-  } catch(e) {
-    showToast('❌ 保存に失敗しました: ' + e.message);
-    setError();
-  }
+  } catch(e) { showToast('❌ 保存に失敗しました'); setError(); }
 };
+
+// ===== 削除機能 =====
+window.openDeleteModal = function(id, date, subjectsJson) {
+  pendingDeleteId = id;
+  const subjects = JSON.parse(decodeURIComponent(subjectsJson));
+  const names = subjects.map(s=>s.subject).join('・');
+  document.getElementById('delete-modal-body').textContent =
+    `${date}の「${names}」の記録を削除します。元に戻すことはできません。`;
+  document.getElementById('delete-modal').classList.add('show');
+};
+window.closeDeleteModal = function() {
+  pendingDeleteId = null;
+  document.getElementById('delete-modal').classList.remove('show');
+};
+window.confirmDelete = async function() {
+  if (!pendingDeleteId) return;
+  try {
+    await deleteDoc(doc(db, "records", pendingDeleteId));
+    showToast('🗑️ 記録を削除しました');
+  } catch(e) { showToast('❌ 削除に失敗しました'); }
+  closeDeleteModal();
+};
+document.getElementById('delete-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDeleteModal();
+});
 
 // ===== Dashboard =====
 function renderDashboard() {
   const area = document.getElementById('dashboard-area');
   const now = new Date();
   if (!calViewYear) { calViewYear = now.getFullYear(); calViewMonth = now.getMonth(); }
-
   const total = records.length;
   const days = new Set(records.map(r=>r.date)).size;
   const mins = records.flatMap(r=>r.subjects).reduce((a,s)=>a+s.minutes,0);
-
   const counts = {};
-  records.flatMap(r=>r.subjects).forEach(s => {
-    counts[s.subject] = (counts[s.subject]||0) + 1;
-  });
+  records.flatMap(r=>r.subjects).forEach(s => { counts[s.subject] = (counts[s.subject]||0)+1; });
   const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
   const max = sorted[0]?.[1] || 1;
   const colors = ['#2d6a4f','#52b788','#74c69d','#95d5b2','#b7e4c7','#d8f3dc'];
-
   const recordDates = new Set(records.map(r=>r.date));
   const today = getTodayStr();
   const first = new Date(calViewYear, calViewMonth, 1);
@@ -496,17 +483,21 @@ function renderDashboard() {
     const ds = `${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     calHtml += `<div class="cal-day ${recordDates.has(ds)?'has-record':''} ${ds===today?'today':''}">${d}</div>`;
   }
-
   const recentHtml = records.length
-    ? records.slice(0,20).map(r=>`
-      <div class="record-item">
-        <div class="record-item-header">
-          <span class="record-date">${r.date}</span>
-          <span class="record-feeling">${r.subjects.map(s=>s.feeling!=null?FEELINGS[s.feeling]:'').filter(Boolean)[0]||''}</span>
-        </div>
-        <div class="record-subjects">${r.subjects.map(s=>`<span class="subject-tag">${s.subject}</span>`).join('')}</div>
-        ${r.subjects.map(s=>s.content?`<div class="record-note">・${s.content}${s.minutes?` (${s.minutes}分)`:''}</div>`:'').join('')}
-      </div>`).join('')
+    ? records.slice(0,30).map(r => {
+        const enc = encodeURIComponent(JSON.stringify(r.subjects));
+        return `
+        <div class="record-item">
+          <div class="record-item-header">
+            <span class="record-date">${r.date}</span>
+            <span class="record-feeling">${r.subjects.map(s=>s.feeling!=null?FEELINGS[s.feeling]:'').filter(Boolean)[0]||''}</span>
+          </div>
+          <div class="record-subjects">${r.subjects.map(s=>`<span class="subject-tag">${s.subject}</span>`).join('')}</div>
+          ${r.subjects.map(s=>s.content?`<div class="record-note">・${s.content}${s.minutes?` (${s.minutes}分)`:''}</div>`:'').join('')}
+          <div class="record-footer">
+            <button class="btn-delete-record" onclick="openDeleteModal('${r.id}','${r.date}','${enc}')">🗑️ 削除</button>
+          </div>
+        </div>`;}).join('')
     : '<div class="empty-state">📝 まだ記録がありません</div>';
 
   area.innerHTML = `
@@ -516,18 +507,14 @@ function renderDashboard() {
       <div class="stat-box"><div class="stat-num">${mins}</div><div class="stat-label">合計(分)</div></div>
     </div>
     <div class="section-title">📚 教科別の記録回数</div>
-    <div class="card">
-      <div class="bar-chart">
-        ${sorted.length
-          ? sorted.map(([name,cnt],i)=>`
-            <div class="bar-item">
-              <div class="bar-name">${name}</div>
-              <div class="bar-track"><div class="bar-fill" style="width:${cnt/max*100}%;background:${colors[i%colors.length]}"></div></div>
-              <div class="bar-val">${cnt}回</div>
-            </div>`).join('')
-          : '<div class="empty-state">まだ記録がありません</div>'}
-      </div>
-    </div>
+    <div class="card"><div class="bar-chart">
+      ${sorted.length ? sorted.map(([name,cnt],i)=>`
+        <div class="bar-item">
+          <div class="bar-name">${name}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${cnt/max*100}%;background:${colors[i%colors.length]}"></div></div>
+          <div class="bar-val">${cnt}回</div>
+        </div>`).join('') : '<div class="empty-state">まだ記録がありません</div>'}
+    </div></div>
     <div class="section-title">📅 カレンダー</div>
     <div class="card">
       <div class="cal-nav">
@@ -548,21 +535,6 @@ window.changeMonth = function(delta) {
   renderDashboard();
 };
 
-window.renderRecordList = function() {
-  const el = document.getElementById('record-list');
-  if(!el) return;
-  el.innerHTML = records.slice(0,20).map(r=>`
-    <div class="record-item">
-      <div class="record-item-header">
-        <span class="record-date">${r.date}</span>
-        <span class="record-feeling">${r.subjects.map(s=>s.feeling!=null?FEELINGS[s.feeling]:'').filter(Boolean)[0]||''}</span>
-      </div>
-      <div class="record-subjects">${r.subjects.map(s=>`<span class="subject-tag">${s.subject}</span>`).join('')}</div>
-      ${r.subjects.map(s=>s.content?`<div class="record-note">・${s.content}${s.minutes?` (${s.minutes}分)`:''}</div>`:'').join('')}
-    </div>`).join('') || '<div class="empty-state">📝 まだ記録がありません</div>';
-};
-
-// ===== Utils =====
 function getTodayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -574,7 +546,6 @@ window.showToast = function(msg) {
   setTimeout(()=>t.classList.remove('show'), 2500);
 };
 
-// ===== Init =====
 buildForm();
 </script>
 </body>
