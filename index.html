@@ -21,123 +21,41 @@
     --radius: 12px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Zen Kaku Gothic New', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-  .header {
-    background: var(--accent);
-    color: white;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 16px rgba(45,106,79,0.25);
-  }
+  body { font-family: 'Zen Kaku Gothic New', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+
+  .header { background: var(--accent); color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(45,106,79,0.25); }
   .header-icon { font-size: 24px; }
   .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
   .header-sub { font-size: 12px; opacity: 0.75; margin-top: 1px; }
-  .sync-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #95d5b2;
-    margin-left: auto;
-    flex-shrink: 0;
-    transition: background 0.3s;
-  }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #95d5b2; margin-left: auto; flex-shrink: 0; transition: background 0.3s; }
   .sync-dot.syncing { background: var(--accent3); animation: pulse 1s infinite; }
   .sync-dot.error { background: var(--danger); }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-  .tabs {
-    display: flex;
-    gap: 4px;
-    padding: 16px 20px 0;
-    border-bottom: 2px solid var(--border);
-    background: var(--surface);
-  }
-  .tab-btn {
-    padding: 10px 20px;
-    border: none;
-    background: none;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text2);
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    transition: all 0.2s;
-    border-radius: 8px 8px 0 0;
-  }
+
+  .tabs { display: flex; gap: 4px; padding: 16px 20px 0; border-bottom: 2px solid var(--border); background: var(--surface); }
+  .tab-btn { padding: 10px 20px; border: none; background: none; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--text2); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; border-radius: 8px 8px 0 0; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface2); }
   .tab-btn:hover:not(.active) { color: var(--text); background: var(--surface2); }
+
   .container { max-width: 640px; margin: 0 auto; padding: 20px 16px; }
   .panel { display: none; }
   .panel.active { display: block; }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-  }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
   .card-title { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 6px; }
-  .field input, .field select, .field textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text);
-    background: var(--bg);
-    transition: border-color 0.2s;
-    outline: none;
-  }
+  .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); transition: border-color 0.2s; outline: none; }
   .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent2); background: var(--surface); }
   .field textarea { resize: vertical; min-height: 72px; }
-  .subject-block {
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 12px;
-    background: var(--surface2);
-    position: relative;
-  }
+
+  .subject-block { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; background: var(--surface2); position: relative; }
   .subject-block-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .subject-num {
-    width: 24px; height: 24px;
-    background: var(--accent);
-    color: white;
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  .subject-num { width: 24px; height: 24px; background: var(--accent); color: white; border-radius: 50%; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .subject-label { font-size: 14px; font-weight: 700; }
-  .btn {
-    padding: 11px 20px;
-    border: none;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
+
+  .btn { padding: 11px 20px; border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
   .btn-secondary { background: var(--surface2); color: var(--text); border: 1.5px solid var(--border); }
   .btn-secondary:hover { background: var(--border); }
   .btn-danger { background: var(--danger); color: white; }
@@ -148,82 +66,71 @@
   .btn-submit:hover { background: #235c41; }
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .btn-delete-sub { position: absolute; top: 12px; right: 12px; }
+  .btn-back { background: var(--surface2); color: var(--accent); border: 1.5px solid var(--accent); margin-bottom: 16px; }
+  .btn-back:hover { background: var(--accent); color: white; }
+
   .star-row { display: flex; gap: 6px; }
   .star-btn { font-size: 22px; cursor: pointer; background: none; border: none; opacity: 0.3; transition: opacity 0.15s, transform 0.15s; padding: 2px; }
   .star-btn.active { opacity: 1; transform: scale(1.1); }
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--accent);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 100px;
-    font-size: 14px;
-    font-weight: 700;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    transition: transform 0.3s;
-    z-index: 999;
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* 画像アップロード */
+  .image-upload-area { border: 2px dashed var(--border); border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: var(--bg); }
+  .image-upload-area:hover { border-color: var(--accent2); background: var(--surface); }
+  .image-upload-area input[type="file"] { display: none; }
+  .image-upload-label { font-size: 13px; color: var(--text2); display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+  .image-upload-icon { font-size: 28px; }
+  .image-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .image-preview-item { position: relative; width: 80px; height: 80px; }
+  .image-preview-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1.5px solid var(--border); }
+  .image-preview-remove { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; background: var(--danger); color: white; border: none; border-radius: 50%; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .image-count { font-size: 11px; color: var(--text2); margin-top: 6px; }
+
+  /* 詳細画面の画像 */
+  .detail-images { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .detail-image { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1.5px solid var(--border); cursor: pointer; transition: transform 0.15s; }
+  .detail-image:hover { transform: scale(1.05); }
+
+  /* 画像拡大モーダル */
+  .image-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .image-modal.show { opacity: 1; pointer-events: all; }
+  .image-modal img { max-width: 100%; max-height: 85vh; border-radius: 8px; object-fit: contain; }
+  .image-modal-close { position: absolute; top: 16px; right: 16px; background: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
   /* 削除確認モーダル */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
   .modal-overlay.show { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 24px;
-    max-width: 320px;
-    width: 100%;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    transform: scale(0.95);
-    transition: transform 0.2s;
-  }
+  .modal { background: var(--surface); border-radius: var(--radius); padding: 24px; max-width: 320px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s; }
   .modal-overlay.show .modal { transform: scale(1); }
   .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
   .modal-body { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--accent); color: white; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: transform 0.3s; z-index: 999; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
   .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
   .stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; }
   .stat-num { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; color: var(--accent); }
   .stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
   .bar-chart { display: flex; flex-direction: column; gap: 10px; }
   .bar-item { display: flex; align-items: center; gap: 10px; }
   .bar-name { font-size: 13px; font-weight: 700; width: 50px; text-align: right; flex-shrink: 0; }
   .bar-track { flex: 1; background: var(--surface2); border-radius: 100px; height: 18px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1); min-width: 4px; }
   .bar-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); width: 36px; flex-shrink: 0; }
+
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal-header { font-size: 11px; font-weight: 700; color: var(--text2); text-align: center; padding: 4px 0; }
-  .cal-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; background: var(--surface2); color: var(--text2); }
-  .cal-day.has-record { background: var(--accent); color: white; font-weight: 700; }
+  .cal-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; background: var(--surface2); color: var(--text2); transition: transform 0.15s; }
+  .cal-day.has-record { background: var(--accent); color: white; font-weight: 700; cursor: pointer; }
+  .cal-day.has-record:hover { transform: scale(1.1); background: #235c41; }
   .cal-day.today { outline: 2px solid var(--accent3); outline-offset: -2px; }
   .cal-day.empty { background: none; }
   .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .cal-nav-title { font-size: 15px; font-weight: 700; }
-  .record-item {
-    border-left: 4px solid var(--accent2);
-    padding: 12px 14px;
-    background: var(--surface2);
-    border-radius: 0 8px 8px 0;
-    margin-bottom: 8px;
-  }
+
+  .record-item { border-left: 4px solid var(--accent2); padding: 12px 14px; background: var(--surface2); border-radius: 0 8px 8px 0; margin-bottom: 8px; }
   .record-item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
   .record-date { font-size: 12px; color: var(--text2); font-family: 'DM Mono', monospace; }
   .record-subjects { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
@@ -231,25 +138,28 @@
   .record-feeling { font-size: 14px; }
   .record-note { font-size: 12px; color: var(--text2); margin-top: 4px; }
   .record-footer { display: flex; justify-content: flex-end; margin-top: 8px; }
-  .btn-delete-record {
-    background: none;
-    border: 1px solid var(--danger);
-    color: var(--danger);
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-  }
+  .btn-delete-record { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; }
   .btn-delete-record:hover { background: var(--danger); color: white; }
+
+  /* 詳細表示 */
+  .detail-section { margin-bottom: 20px; }
+  .detail-date-badge { display: inline-block; background: var(--accent); color: white; font-size: 14px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 16px; font-family: 'DM Mono', monospace; }
+  .detail-subject-block { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; background: var(--surface2); }
+  .detail-subject-name { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .detail-row { display: flex; gap: 8px; margin-bottom: 8px; font-size: 14px; }
+  .detail-label { color: var(--text2); font-weight: 700; width: 80px; flex-shrink: 0; font-size: 12px; padding-top: 2px; }
+  .detail-value { color: var(--text); flex: 1; }
+  .detail-feeling-display { font-size: 22px; }
+
   .empty-state { text-align: center; color: var(--text2); padding: 32px; font-size: 14px; }
   .section-title { font-size: 14px; font-weight: 700; color: var(--text2); margin: 20px 0 10px; display: flex; align-items: center; gap: 6px; }
   .badge { background: var(--accent2); color: white; font-size: 10px; padding: 2px 7px; border-radius: 100px; font-weight: 700; }
   .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
   .loading-spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  .upload-progress { font-size: 12px; color: var(--accent2); margin-top: 6px; display: none; }
+  .upload-progress.show { display: block; }
 </style>
 </head>
 <body>
@@ -293,6 +203,12 @@
   </div>
 </div>
 
+<!-- 画像拡大モーダル -->
+<div class="image-modal" id="image-modal" onclick="closeImageModal()">
+  <button class="image-modal-close" onclick="closeImageModal()">✕</button>
+  <img id="image-modal-img" src="" alt="">
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -317,29 +233,26 @@ const FEELINGS = ['😞','😐','😊','😄','🤩'];
 let records = [];
 let subjectCount = 0;
 let feelings = {};
+let pendingImages = []; // {dataUrl, file}
 let calViewYear, calViewMonth;
 let pendingDeleteId = null;
 
+// リアルタイム同期
 const q = query(collection(db, "records"), orderBy("timestamp", "desc"));
 onSnapshot(q, (snapshot) => {
   records = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   setSynced();
   const activeTab = document.querySelector('.tab-btn.active');
-  if (activeTab && activeTab.textContent.includes('ダッシュボード')) renderDashboard();
-}, (err) => {
-  setError();
-  showToast('⚠️ 接続エラー: ' + err.message);
-});
+  if (activeTab && activeTab.textContent.includes('ダッシュボード')) {
+    const detailArea = document.getElementById('detail-area');
+    if (!detailArea) renderDashboard();
+  }
+}, (err) => { setError(); showToast('⚠️ 接続エラー: ' + err.message); });
 
-function setSynced() {
-  document.getElementById('sync-dot').className = 'sync-dot';
-  document.getElementById('sync-label').textContent = 'クラウド同期中';
-}
-function setError() {
-  document.getElementById('sync-dot').className = 'sync-dot error';
-  document.getElementById('sync-label').textContent = '接続エラー';
-}
+function setSynced() { document.getElementById('sync-dot').className = 'sync-dot'; document.getElementById('sync-label').textContent = 'クラウド同期中'; }
+function setError() { document.getElementById('sync-dot').className = 'sync-dot error'; document.getElementById('sync-label').textContent = '接続エラー'; }
 
+// ===== タブ =====
 window.switchTab = function(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['record','dashboard'][i] === tab));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -347,13 +260,28 @@ window.switchTab = function(tab) {
   if (tab === 'dashboard') renderDashboard();
 };
 
+// ===== フォーム =====
 function buildForm() {
+  pendingImages = [];
   document.getElementById('record-form-area').innerHTML = `
     <div class="card">
       <div class="card-title">📅 勉強記録を入力</div>
       <div class="field"><label>日付</label><input type="date" id="date-input"></div>
       <div id="subjects-container"></div>
       <button class="btn btn-add" onclick="addSubject()">＋ 教科を追加</button>
+      <div class="field" style="margin-top:4px">
+        <label>📷 写真・ノートの画像（最大3枚）</label>
+        <div class="image-upload-area" onclick="document.getElementById('img-input').click()">
+          <label class="image-upload-label">
+            <span class="image-upload-icon">📷</span>
+            <span>タップして画像を選択</span>
+            <span style="font-size:11px">jpg / png 対応・自動圧縮</span>
+          </label>
+          <input type="file" id="img-input" accept="image/*" multiple onchange="handleImages(event)">
+        </div>
+        <div class="image-previews" id="image-previews"></div>
+        <div class="upload-progress" id="upload-progress">画像を処理中...</div>
+      </div>
       <button class="btn btn-submit" onclick="submitRecord()">✅ 送信</button>
     </div>`;
   document.getElementById('date-input').value = getTodayStr();
@@ -379,8 +307,7 @@ window.addSubject = function() {
       </select>
     </div>
     <div class="field" id="custom-wrap-${idx}" style="display:none">
-      <label>教科名を入力</label>
-      <input type="text" id="custom-${idx}" placeholder="例: 音楽">
+      <label>教科名を入力</label><input type="text" id="custom-${idx}" placeholder="例: 音楽">
     </div>
     <div class="field"><label>やったこと</label><input type="text" id="content-${idx}" placeholder="例: ワーク3ページ"></div>
     <div class="field"><label>勉強時間（分）</label><input type="number" id="minutes-${idx}" min="0" max="600" placeholder="例: 30"></div>
@@ -403,6 +330,61 @@ window.setFeeling = function(idx, val) {
   document.querySelectorAll(`#feeling-${idx} .star-btn`).forEach((b,i) => b.classList.toggle('active', i <= val));
 };
 
+// ===== 画像処理 =====
+window.handleImages = async function(e) {
+  const files = Array.from(e.target.files);
+  if (pendingImages.length + files.length > 3) {
+    showToast('画像は最大3枚までです');
+    return;
+  }
+  const prog = document.getElementById('upload-progress');
+  prog.classList.add('show');
+  prog.textContent = '画像を圧縮中...';
+  for (const file of files) {
+    const dataUrl = await compressImage(file, 1200, 0.8);
+    pendingImages.push({ dataUrl });
+  }
+  prog.classList.remove('show');
+  renderPreviews();
+  e.target.value = '';
+};
+
+function compressImage(file, maxSize, quality) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = url;
+  });
+}
+
+function renderPreviews() {
+  const container = document.getElementById('image-previews');
+  if (!container) return;
+  container.innerHTML = pendingImages.map((img, i) => `
+    <div class="image-preview-item">
+      <img src="${img.dataUrl}" alt="preview">
+      <button class="image-preview-remove" onclick="removePreview(${i})">✕</button>
+    </div>`).join('');
+}
+
+window.removePreview = function(idx) {
+  pendingImages.splice(idx, 1);
+  renderPreviews();
+};
+
+// ===== 送信 =====
 window.submitRecord = async function() {
   const date = document.getElementById('date-input').value;
   if (!date) { showToast('日付を入力してください'); return; }
@@ -422,43 +404,81 @@ window.submitRecord = async function() {
       memo: document.getElementById('memo-'+idx).value,
     });
   }
+  const images = pendingImages.map(i => i.dataUrl);
   try {
     document.getElementById('sync-dot').className = 'sync-dot syncing';
-    await addDoc(collection(db, "records"), { date, subjects: subjectsData, timestamp: serverTimestamp() });
+    await addDoc(collection(db, "records"), { date, subjects: subjectsData, images, timestamp: serverTimestamp() });
     document.getElementById('subjects-container').innerHTML = '';
-    subjectCount = 0; feelings = {};
+    subjectCount = 0; feelings = {}; pendingImages = [];
     document.getElementById('date-input').value = getTodayStr();
     addSubject();
     showToast('✅ 記録を保存しました！');
-  } catch(e) { showToast('❌ 保存に失敗しました'); setError(); }
+  } catch(e) { showToast('❌ 保存に失敗しました: ' + e.message); setError(); }
 };
 
-// ===== 削除機能 =====
+// ===== 削除 =====
 window.openDeleteModal = function(id, date, subjectsJson) {
   pendingDeleteId = id;
   const subjects = JSON.parse(decodeURIComponent(subjectsJson));
-  const names = subjects.map(s=>s.subject).join('・');
   document.getElementById('delete-modal-body').textContent =
-    `${date}の「${names}」の記録を削除します。元に戻すことはできません。`;
+    `${date}の「${subjects.map(s=>s.subject).join('・')}」の記録を削除します。元に戻すことはできません。`;
   document.getElementById('delete-modal').classList.add('show');
 };
-window.closeDeleteModal = function() {
-  pendingDeleteId = null;
-  document.getElementById('delete-modal').classList.remove('show');
-};
+window.closeDeleteModal = function() { pendingDeleteId = null; document.getElementById('delete-modal').classList.remove('show'); };
 window.confirmDelete = async function() {
   if (!pendingDeleteId) return;
-  try {
-    await deleteDoc(doc(db, "records", pendingDeleteId));
-    showToast('🗑️ 記録を削除しました');
-  } catch(e) { showToast('❌ 削除に失敗しました'); }
+  try { await deleteDoc(doc(db, "records", pendingDeleteId)); showToast('🗑️ 記録を削除しました'); }
+  catch(e) { showToast('❌ 削除に失敗しました'); }
   closeDeleteModal();
 };
-document.getElementById('delete-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeDeleteModal();
-});
+document.getElementById('delete-modal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
 
-// ===== Dashboard =====
+// ===== 画像モーダル =====
+window.openImageModal = function(src) {
+  document.getElementById('image-modal-img').src = src;
+  document.getElementById('image-modal').classList.add('show');
+};
+window.closeImageModal = function() { document.getElementById('image-modal').classList.remove('show'); };
+
+// ===== 詳細表示 =====
+window.showDetail = function(dateStr) {
+  const dayRecords = records.filter(r => r.date === dateStr);
+  if (!dayRecords.length) return;
+  const area = document.getElementById('dashboard-area');
+  let html = `<div id="detail-area">`;
+  html += `<button class="btn btn-back" onclick="backToDashboard()">← カレンダーに戻る</button>`;
+  html += `<span class="detail-date-badge">📅 ${dateStr}</span>`;
+
+  dayRecords.forEach(r => {
+    r.subjects.forEach(s => {
+      html += `<div class="detail-subject-block">`;
+      html += `<div class="detail-subject-name"><span class="subject-tag">${s.subject}</span></div>`;
+      if (s.content) html += `<div class="detail-row"><div class="detail-label">やったこと</div><div class="detail-value">${s.content}</div></div>`;
+      if (s.minutes) html += `<div class="detail-row"><div class="detail-label">勉強時間</div><div class="detail-value">${s.minutes}分</div></div>`;
+      if (s.feeling != null) html += `<div class="detail-row"><div class="detail-label">達成感</div><div class="detail-value detail-feeling-display">${FEELINGS[s.feeling]}</div></div>`;
+      if (s.memo) html += `<div class="detail-row"><div class="detail-label">感想</div><div class="detail-value">${s.memo}</div></div>`;
+      html += `</div>`;
+    });
+    if (r.images && r.images.length) {
+      html += `<div class="detail-section">`;
+      html += `<div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;">📷 添付画像</div>`;
+      html += `<div class="detail-images">`;
+      r.images.forEach(img => {
+        html += `<img class="detail-image" src="${img}" onclick="openImageModal('${img}')" alt="記録画像">`;
+      });
+      html += `</div></div>`;
+    }
+  });
+  html += `</div>`;
+  area.innerHTML = html;
+};
+
+window.backToDashboard = function() {
+  document.getElementById('detail-area')?.remove();
+  renderDashboard();
+};
+
+// ===== ダッシュボード =====
 function renderDashboard() {
   const area = document.getElementById('dashboard-area');
   const now = new Date();
@@ -481,11 +501,13 @@ function renderDashboard() {
   for(let i=0;i<startDow;i++) calHtml += `<div class="cal-day empty"></div>`;
   for(let d=1;d<=lastDay;d++){
     const ds = `${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    calHtml += `<div class="cal-day ${recordDates.has(ds)?'has-record':''} ${ds===today?'today':''}">${d}</div>`;
+    const hasRecord = recordDates.has(ds);
+    calHtml += `<div class="cal-day ${hasRecord?'has-record':''} ${ds===today?'today':''}" ${hasRecord?`onclick="showDetail('${ds}')" title="タップして詳細を見る"`:''}>${d}</div>`;
   }
   const recentHtml = records.length
     ? records.slice(0,30).map(r => {
         const enc = encodeURIComponent(JSON.stringify(r.subjects));
+        const thumbs = (r.images||[]).slice(0,2).map(img=>`<img src="${img}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;border:1px solid var(--border);cursor:pointer" onclick="openImageModal('${img}')">`).join('');
         return `
         <div class="record-item">
           <div class="record-item-header">
@@ -494,6 +516,7 @@ function renderDashboard() {
           </div>
           <div class="record-subjects">${r.subjects.map(s=>`<span class="subject-tag">${s.subject}</span>`).join('')}</div>
           ${r.subjects.map(s=>s.content?`<div class="record-note">・${s.content}${s.minutes?` (${s.minutes}分)`:''}</div>`:'').join('')}
+          ${thumbs?`<div style="display:flex;gap:4px;margin-top:6px">${thumbs}</div>`:''}
           <div class="record-footer">
             <button class="btn-delete-record" onclick="openDeleteModal('${r.id}','${r.date}','${enc}')">🗑️ 削除</button>
           </div>
@@ -515,7 +538,7 @@ function renderDashboard() {
           <div class="bar-val">${cnt}回</div>
         </div>`).join('') : '<div class="empty-state">まだ記録がありません</div>'}
     </div></div>
-    <div class="section-title">📅 カレンダー</div>
+    <div class="section-title">📅 カレンダー <span style="font-size:11px;color:var(--text2);font-weight:400">（記録のある日をタップ→詳細）</span></div>
     <div class="card">
       <div class="cal-nav">
         <button class="btn btn-secondary btn-sm" onclick="changeMonth(-1)">◀</button>
