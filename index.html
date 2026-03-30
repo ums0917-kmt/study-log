@@ -270,7 +270,7 @@ function buildForm() {
       <div id="subjects-container"></div>
       <button class="btn btn-add" onclick="addSubject()">＋ 教科を追加</button>
       <div class="field" style="margin-top:4px">
-        <label>📷 写真・ノートの画像（最大3枚）</label>
+        <label>📷 写真・ノートの画像（最大2枚）</label>
         <div class="image-upload-area" onclick="document.getElementById('img-input').click()">
           <label class="image-upload-label">
             <span class="image-upload-icon">📷</span>
@@ -333,15 +333,15 @@ window.setFeeling = function(idx, val) {
 // ===== 画像処理 =====
 window.handleImages = async function(e) {
   const files = Array.from(e.target.files);
-  if (pendingImages.length + files.length > 3) {
-    showToast('画像は最大3枚までです');
+  if (pendingImages.length + files.length > 2) {
+    showToast('画像は最大2枚までです');
     return;
   }
   const prog = document.getElementById('upload-progress');
   prog.classList.add('show');
   prog.textContent = '画像を圧縮中...';
   for (const file of files) {
-    const dataUrl = await compressImage(file, 800, 0.65);
+    const dataUrl = await compressImage(file, 1200, 0.8);
     pendingImages.push({ dataUrl });
   }
   prog.classList.remove('show');
@@ -405,6 +405,13 @@ window.submitRecord = async function() {
     });
   }
   const images = pendingImages.map(i => i.dataUrl);
+
+  // サイズチェック（Firestoreの1MB制限）
+  const totalSize = JSON.stringify({ date, subjects: subjectsData, images }).length;
+  if (totalSize > 900000) {
+    showToast('⚠️ 画像が大きすぎます。枚数を減らしてください');
+    return;
+  }
   try {
     document.getElementById('sync-dot').className = 'sync-dot syncing';
     await addDoc(collection(db, "records"), { date, subjects: subjectsData, images, timestamp: serverTimestamp() });
