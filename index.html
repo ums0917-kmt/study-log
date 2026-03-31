@@ -640,7 +640,7 @@ function renderComments(dateStr) {
       <div class="comment-form-title">💬 コメントを書く</div>
       <div class="comment-input-row">
         <input class="comment-name-input" id="comment-name-${dateStr}" type="text" placeholder="名前（例：お父さん）" maxlength="20">
-        <textarea class="comment-text-input" id="comment-text-${dateStr}" placeholder="よく頑張ったね！" maxlength="200"></textarea>
+        <textarea class="comment-text-input" id="comment-text-${dateStr}" placeholder="よく頑張ったね！" maxlength="800"></textarea>
       </div>
       <button class="btn-comment-submit" onclick="submitComment('${dateStr}')">💬 コメントを送る</button>
     </div>`;
