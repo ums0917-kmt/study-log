@@ -99,6 +99,15 @@
   .stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; }
   .stat-num { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; color: var(--accent); }
   .stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  /* 月統計ヘッダー */
+  .stat-month-label {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+    letter-spacing: 0.03em;
+  }
   .bar-chart { display: flex; flex-direction: column; gap: 10px; }
   .bar-item { display: flex; align-items: center; gap: 10px; }
   .bar-name { font-size: 13px; font-weight: 700; width: 50px; text-align: right; flex-shrink: 0; }
@@ -151,7 +160,6 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .upload-progress { font-size: 12px; color: var(--accent2); margin-top: 6px; display: none; }
   .upload-progress.show { display: block; }
-
   /* ===== コメントセクション ===== */
   .comment-section {
     margin-top: 24px;
@@ -332,7 +340,6 @@ import {
   getFirestore, collection, addDoc, deleteDoc, doc,
   onSnapshot, query, orderBy, serverTimestamp, where, getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCLhG-MzgCLY7Riy5gaJx6xCTG2NWYXRA8",
   authDomain: "study-log-oshiro.firebaseapp.com",
@@ -343,7 +350,6 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const SUBJECTS = ['国語','数学','英語','理科','社会','その他'];
 const FEELINGS = ['😞','😐','😊','😄','🤩'];
 let records = [];
@@ -352,11 +358,9 @@ let feelings = {};
 let pendingImages = [];
 let calViewYear, calViewMonth;
 let pendingDeleteId = null;
-
 // コメント関連
 let allComments = []; // {id, date, name, text, timestamp}
 let commentDates = new Set(); // コメントのある日付セット
-
 // ===== リアルタイム同期：勉強記録 =====
 const q = query(collection(db, "records"), orderBy("timestamp", "desc"));
 onSnapshot(q, (snapshot) => {
@@ -368,7 +372,6 @@ onSnapshot(q, (snapshot) => {
     if (!detailArea) renderDashboard();
   }
 }, (err) => { setError(); showToast('⚠️ 接続エラー: ' + err.message); });
-
 // ===== リアルタイム同期：コメント =====
 const cq = query(collection(db, "comments"), orderBy("timestamp", "asc"));
 onSnapshot(cq, (snapshot) => {
@@ -387,10 +390,8 @@ onSnapshot(cq, (snapshot) => {
   const dashArea = document.getElementById('dashboard-area');
   if (dashArea && !detailArea) renderDashboard();
 }, () => {});
-
 function setSynced() { document.getElementById('sync-dot').className = 'sync-dot'; document.getElementById('sync-label').textContent = 'クラウド同期中'; }
 function setError() { document.getElementById('sync-dot').className = 'sync-dot error'; document.getElementById('sync-label').textContent = '接続エラー'; }
-
 // ===== タブ =====
 window.switchTab = function(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['record','dashboard'][i] === tab));
@@ -398,7 +399,6 @@ window.switchTab = function(tab) {
   document.getElementById('panel-'+tab).classList.add('active');
   if (tab === 'dashboard') renderDashboard();
 };
-
 // ===== フォーム =====
 function buildForm() {
   pendingImages = [];
@@ -426,7 +426,6 @@ function buildForm() {
   document.getElementById('date-input').value = getTodayStr();
   addSubject();
 }
-
 window.addSubject = function() {
   subjectCount++;
   const idx = subjectCount;
@@ -461,13 +460,11 @@ window.addSubject = function() {
     document.getElementById('custom-wrap-'+idx).style.display = this.value === 'その他' ? 'block' : 'none';
   });
 };
-
 window.removeSubject = function(idx) { document.getElementById('sub-'+idx)?.remove(); };
 window.setFeeling = function(idx, val) {
   feelings[idx] = val;
   document.querySelectorAll(`#feeling-${idx} .star-btn`).forEach((b,i) => b.classList.toggle('active', i <= val));
 };
-
 // ===== 画像処理 =====
 window.handleImages = async function(e) {
   const files = Array.from(e.target.files);
@@ -486,7 +483,6 @@ window.handleImages = async function(e) {
   renderPreviews();
   e.target.value = '';
 };
-
 function compressImage(file, maxSize, quality) {
   return new Promise((resolve) => {
     const img = new Image();
@@ -506,7 +502,6 @@ function compressImage(file, maxSize, quality) {
     img.src = url;
   });
 }
-
 function renderPreviews() {
   const container = document.getElementById('image-previews');
   if (!container) return;
@@ -520,7 +515,6 @@ window.removePreview = function(idx) {
   pendingImages.splice(idx, 1);
   renderPreviews();
 };
-
 // ===== 送信 =====
 window.submitRecord = async function() {
   const date = document.getElementById('date-input').value;
@@ -557,7 +551,6 @@ window.submitRecord = async function() {
     showToast('✅ 記録を保存しました！');
   } catch(e) { showToast('❌ 保存に失敗しました: ' + e.message); setError(); }
 };
-
 // ===== 削除 =====
 window.openDeleteModal = function(id, date, subjectsJson) {
   pendingDeleteId = id;
@@ -574,14 +567,12 @@ window.confirmDelete = async function() {
   closeDeleteModal();
 };
 document.getElementById('delete-modal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
-
 // ===== 画像モーダル =====
 window.openImageModal = function(src) {
   document.getElementById('image-modal-img').src = src;
   document.getElementById('image-modal').classList.add('show');
 };
 window.closeImageModal = function() { document.getElementById('image-modal').classList.remove('show'); };
-
 // ===== コメント機能 =====
 window.submitComment = async function(dateStr) {
   const nameEl = document.getElementById('comment-name-' + dateStr);
@@ -603,7 +594,6 @@ window.submitComment = async function(dateStr) {
     showToast('❌ コメントの送信に失敗しました');
   }
 };
-
 window.deleteComment = async function(commentId) {
   try {
     await deleteDoc(doc(db, "comments", commentId));
@@ -612,7 +602,6 @@ window.deleteComment = async function(commentId) {
     showToast('❌ 削除に失敗しました');
   }
 };
-
 function renderComments(dateStr) {
   const container = document.getElementById('comment-area-' + dateStr);
   if (!container) return;
@@ -633,7 +622,6 @@ function renderComments(dateStr) {
         </div>`;
       }).join('')
     : '<div class="comment-empty">まだコメントはありません</div>';
-
   container.innerHTML = `
     <div class="comment-list">${listHtml}</div>
     <div class="comment-form">
@@ -645,11 +633,9 @@ function renderComments(dateStr) {
       <button class="btn-comment-submit" onclick="submitComment('${dateStr}')">💬 コメントを送る</button>
     </div>`;
 }
-
 function escapeHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
 // ===== 詳細表示 =====
 window.showDetail = function(dateStr) {
   const dayRecords = records.filter(r => r.date === dateStr);
@@ -678,7 +664,6 @@ window.showDetail = function(dateStr) {
       html += `</div></div>`;
     }
   });
-
   // コメントセクション
   html += `
     <div class="comment-section">
@@ -687,27 +672,29 @@ window.showDetail = function(dateStr) {
         <div class="loading"><div class="loading-spinner"></div></div>
       </div>
     </div>`;
-
   html += `</div>`;
   area.innerHTML = html;
-
   // コメントを描画
   renderComments(dateStr);
 };
-
 window.backToDashboard = function() {
   document.getElementById('detail-area')?.remove();
   renderDashboard();
 };
-
 // ===== ダッシュボード =====
 function renderDashboard() {
   const area = document.getElementById('dashboard-area');
   const now = new Date();
   if (!calViewYear) { calViewYear = now.getFullYear(); calViewMonth = now.getMonth(); }
-  const total = records.length;
-  const days = new Set(records.map(r=>r.date)).size;
-  const mins = records.flatMap(r=>r.subjects).reduce((a,s)=>a+s.minutes,0);
+
+  // ── ここが変更点：表示中の月のレコードだけで統計を計算 ──
+  const monthStr = `${calViewYear}-${String(calViewMonth + 1).padStart(2, '0')}`;
+  const monthRecords = records.filter(r => r.date && r.date.startsWith(monthStr));
+  const total = monthRecords.length;
+  const days = new Set(monthRecords.map(r => r.date)).size;
+  const mins = monthRecords.flatMap(r => r.subjects).reduce((a, s) => a + s.minutes, 0);
+  // ────────────────────────────────────────────────────────
+
   const counts = {};
   records.flatMap(r=>r.subjects).forEach(s => { counts[s.subject] = (counts[s.subject]||0)+1; });
   const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
@@ -749,6 +736,7 @@ function renderDashboard() {
     : '<div class="empty-state">📝 まだ記録がありません</div>';
 
   area.innerHTML = `
+    <div class="stat-month-label">📅 ${calViewYear}年${calViewMonth + 1}月の記録</div>
     <div class="stat-row">
       <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">記録回数</div></div>
       <div class="stat-box"><div class="stat-num">${days}</div><div class="stat-label">学習日数</div></div>
@@ -779,26 +767,22 @@ function renderDashboard() {
     <div class="section-title">🕐 最近の記録 <span class="badge">${records.length}</span></div>
     <div id="record-list">${recentHtml}</div>`;
 }
-
 window.changeMonth = function(delta) {
   calViewMonth += delta;
   if(calViewMonth < 0) { calViewMonth = 11; calViewYear--; }
   if(calViewMonth > 11) { calViewMonth = 0; calViewYear++; }
   renderDashboard();
 };
-
 function getTodayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
 window.showToast = function(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2500);
 };
-
 buildForm();
 </script>
 </body>
