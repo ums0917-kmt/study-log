@@ -290,6 +290,84 @@
     text-align: center;
     padding: 12px;
   }
+  /* ===== 今日のタスクチェック ===== */
+  .today-task-card {
+    background: var(--surface);
+    border: 2px solid var(--accent2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .today-task-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .today-task-progress {
+    font-size: 11px;
+    color: var(--text2);
+    margin-left: auto;
+    font-weight: 400;
+    font-family: 'DM Mono', monospace;
+  }
+  .task-progress-bar {
+    width: 100%;
+    background: var(--surface2);
+    border-radius: 100px;
+    height: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .task-progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .task-item.done {
+    background: #e8f5ee;
+    color: var(--accent);
+  }
+  .task-item.todo {
+    background: var(--surface2);
+    color: var(--text2);
+  }
+  .task-check {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .task-name {
+    flex: 1;
+  }
+  .task-time {
+    font-size: 11px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+    flex-shrink: 0;
+  }
+  .task-item.done .task-time {
+    color: var(--accent2);
+  }
 </style>
 </head>
 <body>
@@ -350,7 +428,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const SUBJECTS = ['国語','数学','英語','理科','社会','その他'];
+const SUBJECTS = ['タンザム','漢字','数学','AI英会話','チャッピー英語','進研ゼミ','国語','英語','理科','社会','その他'];
 const FEELINGS = ['😞','😐','😊','😄','🤩'];
 let records = [];
 let subjectCount = 0;
@@ -405,7 +483,14 @@ function buildForm() {
   document.getElementById('record-form-area').innerHTML = `
     <div class="card">
       <div class="card-title">📅 勉強記録を入力</div>
-      <div class="field"><label>日付</label><input type="date" id="date-input"></div>
+      <div class="field"><label>日付</label><input type="date" id="date-input" onchange="onDateChange(this.value)"></div>
+      <div id="thu-option" style="display:none;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;">🏫 木曜日の習い事は？</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary" id="thu-no-btn" onclick="setThuMode('なし')" style="flex:1;">なし（早め）</button>
+          <button class="btn btn-secondary" id="thu-yes-btn" onclick="setThuMode('あり')" style="flex:1;">あり（遅め）</button>
+        </div>
+      </div>
       <div id="subjects-container"></div>
       <button class="btn btn-add" onclick="addSubject()">＋ 教科を追加</button>
       <div class="field" style="margin-top:4px">
@@ -423,10 +508,159 @@ function buildForm() {
       </div>
       <button class="btn btn-submit" onclick="submitRecord()">✅ 送信</button>
     </div>`;
-  document.getElementById('date-input').value = getTodayStr();
-  addSubject();
+  const todayStr = getTodayStr();
+  document.getElementById('date-input').value = todayStr;
+  onDateChange(todayStr);
 }
-window.addSubject = function() {
+// 日付変更ハンドラ
+window.onDateChange = function(dateStr) {
+  if (!dateStr) return;
+  // 記録済みチェック
+  const existing = records.filter(r => r.date === dateStr);
+  if (existing.length > 0) {
+    showRecordedView(dateStr, existing);
+    return;
+  }
+  const dow = new Date(dateStr + 'T00:00:00').getDay();
+  const thuOption = document.getElementById('thu-option');
+  if (dow === 4) {
+    thuOption.style.display = 'block';
+    setThuMode('あり');
+  } else {
+    thuOption.style.display = 'none';
+    fillTasksForDow(dow, null);
+  }
+};
+// 記録済み表示（記録画面内）
+function showRecordedView(dateStr, dayRecords) {
+  const container = document.getElementById('subjects-container');
+  const thuOption = document.getElementById('thu-option');
+  if (thuOption) thuOption.style.display = 'none';
+  if (!container) return;
+  const dowNames = ['日','月','火','水','木','金','土'];
+  const dow = new Date(dateStr + 'T00:00:00').getDay();
+  let html = `<div style="background:#e8f5ee;border:1.5px solid var(--accent2);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+    <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;">✅ この日は記録済みです（${dowNames[dow]}曜日）</div>
+    <div style="font-size:12px;color:var(--text2);">ダッシュボードで詳細を確認できます</div>
+  </div>`;
+  dayRecords.forEach(r => {
+    r.subjects.forEach(s => {
+      const feelingEmoji = s.feeling != null ? FEELINGS[s.feeling] : '';
+      html += `<div class="subject-block" style="pointer-events:none;opacity:0.85;">
+        <div class="subject-block-header">
+          <div class="subject-num" style="background:var(--accent2);">✓</div>
+          <div class="subject-label">${s.subject} ${feelingEmoji}</div>
+        </div>`;
+      if (s.content) html += `<div style="font-size:13px;color:var(--text2);margin-bottom:6px;">📝 ${s.content}${s.minutes ? ` （${s.minutes}分）` : ''}</div>`;
+      if (s.memo) html += `<div style="font-size:12px;color:var(--text2);">💭 ${s.memo}</div>`;
+      html += `</div>`;
+    });
+    if (r.images && r.images.length) {
+      html += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">`;
+      r.images.forEach(img => {
+        html += `<img src="${img}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);cursor:pointer" onclick="openImageModal('${img}')">`;
+      });
+      html += `</div>`;
+    }
+  });
+  container.innerHTML = html;
+}
+// 木曜の習い事モード切替
+window.setThuMode = function(mode) {
+  const noBtn = document.getElementById('thu-no-btn');
+  const yesBtn = document.getElementById('thu-yes-btn');
+  if (!noBtn || !yesBtn) return;
+  const isAri = mode === 'あり';
+  yesBtn.style.background = isAri ? 'var(--accent)' : '';
+  yesBtn.style.color = isAri ? 'white' : '';
+  noBtn.style.background = !isAri ? 'var(--accent)' : '';
+  noBtn.style.color = !isAri ? 'white' : '';
+  fillTasksForDow(4, mode);
+};
+// 曜日＋木曜モードに応じてタスクを自動セット
+function fillTasksForDow(dow, thuMode) {
+  // コンテナをリセット
+  const container = document.getElementById('subjects-container');
+  if (!container) return;
+  container.innerHTML = '';
+  subjectCount = 0;
+  feelings = {};
+  // 曜日別タスク（name, content のヒント付き）
+  const WEEKDAY_TASKS = {
+    0: [ // 日（休日）
+      { name: 'タンザム',     hint: '7:10〜' },
+      { name: '漢字',        hint: '7:50〜' },
+      { name: '数学',        hint: '8:10〜' },
+      { name: 'AI英会話',    hint: '9:10〜' },
+      { name: 'チャッピー英語', hint: '9:30〜' },
+      { name: '進研ゼミ',    hint: '9:40〜' },
+    ],
+    1: [ // 月
+      { name: 'タンザム',     hint: '6:10〜' },
+      { name: '漢字',        hint: '6:50〜' },
+      { name: '数学',        hint: '7:10〜' },
+      { name: 'AI英会話',    hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '19:30〜' },
+      { name: '進研ゼミ',    hint: '19:50〜' },
+    ],
+    2: [ // 火
+      { name: 'タンザム',     hint: '6:10〜' },
+      { name: '漢字',        hint: '6:50〜' },
+      { name: '数学',        hint: '7:10〜' },
+      { name: 'AI英会話',    hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '21:30〜' },
+      { name: '進研ゼミ',    hint: '21:50〜' },
+    ],
+    3: [ // 水
+      { name: 'タンザム',     hint: '6:10〜' },
+      { name: '漢字',        hint: '6:50〜' },
+      { name: '数学',        hint: '7:10〜' },
+      { name: 'AI英会話',    hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '19:30〜' },
+      { name: '進研ゼミ',    hint: '19:50〜' },
+    ],
+    4: { // 木（thuMode で分岐）
+      'なし': [
+        { name: 'タンザム',     hint: '6:10〜' },
+        { name: '漢字',        hint: '6:50〜' },
+        { name: '数学',        hint: '7:10〜' },
+        { name: 'AI英会話',    hint: '夕食前' },
+        { name: 'チャッピー英語', hint: '19:30〜' },
+        { name: '進研ゼミ',    hint: '19:50〜' },
+      ],
+      'あり': [
+        { name: 'タンザム',     hint: '6:10〜' },
+        { name: '漢字',        hint: '6:50〜' },
+        { name: '数学',        hint: '7:10〜' },
+        { name: 'AI英会話',    hint: '夕食前' },
+        { name: 'チャッピー英語', hint: '21:00〜' },
+        { name: '進研ゼミ',    hint: '21:20〜' },
+      ],
+    },
+    5: [ // 金
+      { name: 'タンザム',     hint: '6:10〜' },
+      { name: '漢字',        hint: '6:50〜' },
+      { name: '数学',        hint: '7:10〜' },
+      { name: 'AI英会話',    hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '19:30〜' },
+      { name: '進研ゼミ',    hint: '19:50〜' },
+    ],
+    6: [ // 土（休日）
+      { name: 'タンザム',     hint: '7:10〜' },
+      { name: '漢字',        hint: '7:50〜' },
+      { name: '数学',        hint: '8:10〜' },
+      { name: 'AI英会話',    hint: '9:10〜' },
+      { name: 'チャッピー英語', hint: '9:30〜' },
+      { name: '進研ゼミ',    hint: '9:40〜' },
+    ],
+  };
+  let tasks = dow === 4
+    ? (WEEKDAY_TASKS[4][thuMode] || WEEKDAY_TASKS[4]['あり'])
+    : WEEKDAY_TASKS[dow];
+  if (!tasks) { addSubject(); return; }
+  tasks.forEach(t => addSubjectWithName(t.name, t.hint));
+}
+window.addSubjectWithName = function(name, hint) {
   subjectCount++;
   const idx = subjectCount;
   const div = document.createElement('div');
@@ -435,19 +669,19 @@ window.addSubject = function() {
   div.innerHTML = `
     <div class="subject-block-header">
       <div class="subject-num">${idx}</div>
-      <div class="subject-label">教科 ${idx}</div>
+      <div class="subject-label">${name}</div>
     </div>
     <button class="btn btn-danger btn-sm btn-delete-sub" onclick="removeSubject(${idx})">✕</button>
     <div class="field"><label>教科</label>
       <select id="subject-${idx}">
         <option value="">選択</option>
-        ${SUBJECTS.map(s=>`<option>${s}</option>`).join('')}
+        ${SUBJECTS.map(s=>`<option${s===name?' selected':''}>${s}</option>`).join('')}
       </select>
     </div>
     <div class="field" id="custom-wrap-${idx}" style="display:none">
       <label>教科名を入力</label><input type="text" id="custom-${idx}" placeholder="例: 音楽">
     </div>
-    <div class="field"><label>やったこと</label><input type="text" id="content-${idx}" placeholder="例: ワーク3ページ"></div>
+    <div class="field"><label>やったこと</label><input type="text" id="content-${idx}" placeholder="${hint || '例: ワーク3ページ'}"></div>
     <div class="field"><label>勉強時間（分）</label><input type="number" id="minutes-${idx}" min="0" max="600" placeholder="例: 30"></div>
     <div class="field"><label>達成感</label>
       <div class="star-row" id="feeling-${idx}">
@@ -460,6 +694,7 @@ window.addSubject = function() {
     document.getElementById('custom-wrap-'+idx).style.display = this.value === 'その他' ? 'block' : 'none';
   });
 };
+window.addSubject = function() { addSubjectWithName('', ''); };
 window.removeSubject = function(idx) { document.getElementById('sub-'+idx)?.remove(); };
 window.setFeeling = function(idx, val) {
   feelings[idx] = val;
@@ -681,6 +916,105 @@ window.backToDashboard = function() {
   document.getElementById('detail-area')?.remove();
   renderDashboard();
 };
+// ===== 曜日別タスク定義 =====
+// 0=日, 1=月, 2=火, 3=水, 4=木(習い事なし), 5=金, 6=土
+// 木曜は習い事の有無で時間が変わるが項目は同じ
+const DAILY_TASKS = {
+  0: [ // 日（休日）
+    { time: '7:10',  name: 'タンザム' },
+    { time: '7:50',  name: '漢字' },
+    { time: '8:10',  name: '数学' },
+    { time: '9:10',  name: 'AI英会話' },
+    { time: '9:30',  name: 'チャッピー英語' },
+    { time: '9:40',  name: '進研ゼミ' },
+  ],
+  1: [ // 月（習い事なし）
+    { time: '6:10',  name: 'タンザム' },
+    { time: '6:50',  name: '漢字' },
+    { time: '7:10',  name: '数学' },
+    { time: '夕食前', name: 'AI英会話' },
+    { time: '19:30', name: 'チャッピー英語' },
+    { time: '19:50', name: '進研ゼミ' },
+  ],
+  2: [ // 火
+    { time: '6:10',  name: 'タンザム' },
+    { time: '6:50',  name: '漢字' },
+    { time: '7:10',  name: '数学' },
+    { time: '夕食前', name: 'AI英会話' },
+    { time: '21:30', name: 'チャッピー英語' },
+    { time: '21:50', name: '進研ゼミ' },
+  ],
+  3: [ // 水（習い事なし）
+    { time: '6:10',  name: 'タンザム' },
+    { time: '6:50',  name: '漢字' },
+    { time: '7:10',  name: '数学' },
+    { time: '夕食前', name: 'AI英会話' },
+    { time: '19:30', name: 'チャッピー英語' },
+    { time: '19:50', name: '進研ゼミ' },
+  ],
+  4: [ // 木（習い事あり＝遅め）
+    { time: '6:10',  name: 'タンザム' },
+    { time: '6:50',  name: '漢字' },
+    { time: '7:10',  name: '数学' },
+    { time: '夕食前', name: 'AI英会話' },
+    { time: '21:00', name: 'チャッピー英語' },
+    { time: '21:20', name: '進研ゼミ' },
+  ],
+  5: [ // 金（習い事なし）
+    { time: '6:10',  name: 'タンザム' },
+    { time: '6:50',  name: '漢字' },
+    { time: '7:10',  name: '数学' },
+    { time: '夕食前', name: 'AI英会話' },
+    { time: '19:30', name: 'チャッピー英語' },
+    { time: '19:50', name: '進研ゼミ' },
+  ],
+  6: [ // 土（休日）
+    { time: '7:10',  name: 'タンザム' },
+    { time: '7:50',  name: '漢字' },
+    { time: '8:10',  name: '数学' },
+    { time: '9:10',  name: 'AI英会話' },
+    { time: '9:30',  name: 'チャッピー英語' },
+    { time: '9:40',  name: '進研ゼミ' },
+  ],
+};
+
+function renderTodayTasks() {
+  const today = getTodayStr();
+  const dow = new Date().getDay();
+  const dowNames = ['日','月','火','水','木','金','土'];
+  const tasks = DAILY_TASKS[dow] || [];
+  if (!tasks.length) return '';
+
+  // 今日の記録済み教科名セット
+  const todayRecords = records.filter(r => r.date === today);
+  const doneSubjects = new Set(todayRecords.flatMap(r => r.subjects.map(s => s.subject)));
+
+  const done = tasks.filter(t => doneSubjects.has(t.name)).length;
+  const total = tasks.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  const taskHtml = tasks.map(t => {
+    const isDone = doneSubjects.has(t.name);
+    return `<div class="task-item ${isDone ? 'done' : 'todo'}">
+      <span class="task-check">${isDone ? '✅' : '⬜'}</span>
+      <span class="task-name">${t.name}</span>
+      <span class="task-time">${t.time}</span>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="today-task-card">
+    <div class="today-task-title">
+      📋 今日（${dowNames[dow]}曜日）のタスク
+      <span class="today-task-progress">${done} / ${total} 完了</span>
+    </div>
+    <div class="task-progress-bar">
+      <div class="task-progress-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="task-list">${taskHtml}</div>
+  </div>`;
+}
+
 // ===== ダッシュボード =====
 function renderDashboard() {
   const area = document.getElementById('dashboard-area');
@@ -718,24 +1052,24 @@ function renderDashboard() {
   const recentHtml = records.length
     ? records.slice(0,30).map(r => {
         const enc = encodeURIComponent(JSON.stringify(r.subjects));
-        const thumbs = (r.images||[]).slice(0,2).map(img=>`<img src="${img}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;border:1px solid var(--border);cursor:pointer" onclick="openImageModal('${img}')">`).join('');
+        const thumbs = (r.images||[]).slice(0,2).map(img=>`<img src="${img}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;border:1px solid var(--border);cursor:pointer" onclick="event.stopPropagation();openImageModal('${img}')">`).join('');
         const hasComment = commentDates.has(r.date);
         return `
-        <div class="record-item">
+        <div class="record-item" onclick="showDetail('${r.date}')" style="cursor:pointer;" title="タップして詳細を見る">
           <div class="record-item-header">
             <span class="record-date">${r.date}${hasComment ? ' 💬' : ''}</span>
-            <span class="record-feeling">${r.subjects.map(s=>s.feeling!=null?FEELINGS[s.feeling]:'').filter(Boolean)[0]||''}</span>
+            <span style="font-size:11px;color:var(--accent2);font-weight:700;">詳細 ▶</span>
           </div>
           <div class="record-subjects">${r.subjects.map(s=>`<span class="subject-tag">${s.subject}</span>`).join('')}</div>
           ${r.subjects.map(s=>s.content?`<div class="record-note">・${s.content}${s.minutes?` (${s.minutes}分)`:''}</div>`:'').join('')}
           ${thumbs?`<div style="display:flex;gap:4px;margin-top:6px">${thumbs}</div>`:''}
           <div class="record-footer">
-            <button class="btn-delete-record" onclick="openDeleteModal('${r.id}','${r.date}','${enc}')">🗑️ 削除</button>
+            <button class="btn-delete-record" onclick="event.stopPropagation();openDeleteModal('${r.id}','${r.date}','${enc}')">🗑️ 削除</button>
           </div>
         </div>`;}).join('')
     : '<div class="empty-state">📝 まだ記録がありません</div>';
 
-  area.innerHTML = `
+  area.innerHTML = renderTodayTasks() + `
     <div class="stat-month-label">📅 ${calViewYear}年${calViewMonth + 1}月の記録</div>
     <div class="stat-row">
       <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">記録回数</div></div>
