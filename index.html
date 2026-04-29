@@ -365,9 +365,168 @@
     font-family: 'DM Mono', monospace;
     flex-shrink: 0;
   }
-  .task-item.done .task-time {
-    color: var(--accent2);
+  /* ===== 記録画面：新UI ===== */
+  .rec-header-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
   }
+  .rec-date-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .rec-date-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text2);
+    flex-shrink: 0;
+  }
+  .rec-date-input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+  }
+  .rec-date-input:focus { border-color: var(--accent2); background: var(--surface); }
+  /* 項目リスト */
+  .task-entry-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .task-entry-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    box-shadow: var(--shadow);
+  }
+  .task-entry-item:hover { border-color: var(--accent2); background: #f8fffe; }
+  .task-entry-item.filled {
+    border-color: var(--accent2);
+    background: #f0faf5;
+  }
+  .task-entry-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+  }
+  .task-entry-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .task-entry-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .task-entry-item.filled .task-entry-name { color: var(--accent); }
+  .task-entry-summary {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .task-entry-time {
+    font-size: 11px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+    flex-shrink: 0;
+  }
+  .task-entry-item.filled .task-entry-time { color: var(--accent2); }
+  /* 詳細入力パネル（スライドイン） */
+  .task-detail-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .task-detail-panel.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .task-detail-inner {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 20px 20px 36px;
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+  }
+  .task-detail-panel.show .task-detail-inner {
+    transform: translateY(0);
+  }
+  .task-detail-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    margin: 0 auto 16px;
+  }
+  .task-detail-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .task-detail-save {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s;
+  }
+  .task-detail-save:hover { background: #235c41; }
+  .task-detail-clear {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text2);
+    width: 100%;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .task-detail-clear:hover { border-color: var(--danger); color: var(--danger); }
 </style>
 </head>
 <body>
@@ -410,6 +569,33 @@
 <div class="image-modal" id="image-modal" onclick="closeImageModal()">
   <button class="image-modal-close" onclick="closeImageModal()">✕</button>
   <img id="image-modal-img" src="" alt="">
+</div>
+<!-- 項目詳細入力パネル -->
+<div class="task-detail-panel" id="task-detail-panel" onclick="closeTaskPanel(event)">
+  <div class="task-detail-inner" id="task-detail-inner">
+    <div class="task-detail-handle"></div>
+    <div class="task-detail-title" id="task-detail-title">📝 タンザム</div>
+    <div class="field">
+      <label>やったこと</label>
+      <input type="text" id="td-content" placeholder="例: ワーク3ページ">
+    </div>
+    <div class="field">
+      <label>勉強時間（分）</label>
+      <input type="number" id="td-minutes" min="0" max="600" placeholder="例: 30">
+    </div>
+    <div class="field">
+      <label>達成感</label>
+      <div class="star-row" id="td-feeling-row">
+        <!-- JS で描画 -->
+      </div>
+    </div>
+    <div class="field">
+      <label>感想</label>
+      <textarea id="td-memo" placeholder="例: 難しかった、わかりやすかった"></textarea>
+    </div>
+    <button class="task-detail-save" onclick="saveTaskDetail()">💾 保存してリストに戻る</button>
+    <button class="task-detail-clear" onclick="clearTaskDetail()">🗑️ この項目の入力を消す</button>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 <script type="module">
@@ -478,43 +664,77 @@ window.switchTab = function(tab) {
   if (tab === 'dashboard') renderDashboard();
 };
 // ===== フォーム =====
+// 項目別の入力データを保持: { [taskName]: {content, minutes, feeling, memo} }
+let taskInputs = {};
+let currentTaskName = '';
+let currentTaskFeeling = null;
+
 function buildForm() {
   pendingImages = [];
+  taskInputs = {};
+  currentTaskName = '';
+  currentTaskFeeling = null;
   document.getElementById('record-form-area').innerHTML = `
-    <div class="card">
-      <div class="card-title">📅 勉強記録を入力</div>
-      <div class="field"><label>日付</label><input type="date" id="date-input" onchange="onDateChange(this.value)"></div>
-      <div id="thu-option" style="display:none;margin-bottom:14px;">
+    <div class="rec-header-card">
+      <div class="rec-date-row">
+        <span class="rec-date-label">📅 日付</span>
+        <input type="date" id="date-input" class="rec-date-input" onchange="onDateChange(this.value)">
+      </div>
+      <div id="thu-option" style="display:none;margin-bottom:4px;">
         <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;">🏫 木曜日の習い事は？</div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-secondary" id="thu-no-btn" onclick="setThuMode('なし')" style="flex:1;">なし（早め）</button>
           <button class="btn btn-secondary" id="thu-yes-btn" onclick="setThuMode('あり')" style="flex:1;">あり（遅め）</button>
         </div>
       </div>
-      <div id="subjects-container"></div>
-      <button class="btn btn-add" onclick="addSubject()">＋ 教科を追加</button>
-      <div class="field" style="margin-top:4px">
-        <label>📷 写真・ノートの画像（最大2枚）</label>
-        <div class="image-upload-area" onclick="document.getElementById('img-input').click()">
-          <label class="image-upload-label">
-            <span class="image-upload-icon">📷</span>
-            <span>タップして画像を選択</span>
-            <span style="font-size:11px">jpg / png 対応・自動圧縮</span>
-          </label>
-          <input type="file" id="img-input" accept="image/*" multiple onchange="handleImages(event)">
-        </div>
-        <div class="image-previews" id="image-previews"></div>
-        <div class="upload-progress" id="upload-progress">画像を処理中...</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:8px;">📷 写真・ノート（最大2枚）</div>
+      <div class="image-upload-area" onclick="document.getElementById('img-input').click()">
+        <label class="image-upload-label">
+          <span class="image-upload-icon">📷</span>
+          <span>タップして画像を選択</span>
+          <span style="font-size:11px">jpg / png 対応・自動圧縮</span>
+        </label>
+        <input type="file" id="img-input" accept="image/*" multiple onchange="handleImages(event)">
       </div>
-      <button class="btn btn-submit" onclick="submitRecord()">✅ 送信</button>
-    </div>`;
+      <div class="image-previews" id="image-previews"></div>
+      <div class="upload-progress" id="upload-progress">画像を処理中...</div>
+    </div>
+    <div id="task-entry-list" class="task-entry-list"></div>
+    <button class="btn btn-add" onclick="addSubject()" style="margin-bottom:12px;">＋ 教科を追加</button>
+    <button class="btn btn-submit" onclick="submitRecord()">✅ 送信</button>`;
   const todayStr = getTodayStr();
   document.getElementById('date-input').value = todayStr;
   onDateChange(todayStr);
 }
+
+// タスクリストを描画
+function renderTaskEntryList(tasks) {
+  const list = document.getElementById('task-entry-list');
+  if (!list) return;
+  list.innerHTML = tasks.map(t => {
+    const data = taskInputs[t.name];
+    const filled = !!data;
+    const summary = filled
+      ? [data.content, data.minutes ? data.minutes + '分' : '', data.feeling != null ? FEELINGS[data.feeling] : ''].filter(Boolean).join('・')
+      : '';
+    return `<div class="task-entry-item ${filled ? 'filled' : ''}" onclick="openTaskPanel('${t.name}', '${t.hint}')">
+      <div class="task-entry-icon">${filled ? '✅' : '⬜'}</div>
+      <div class="task-entry-body">
+        <div class="task-entry-name">${t.name}</div>
+        ${summary ? `<div class="task-entry-summary">${summary}</div>` : ''}
+      </div>
+      <div class="task-entry-time">${t.hint}</div>
+    </div>`;
+  }).join('');
+}
+
+// 現在の曜日タスクリストを保持
+let currentTasks = [];
+
 // 日付変更ハンドラ
 window.onDateChange = function(dateStr) {
   if (!dateStr) return;
+  taskInputs = {};
   // 記録済みチェック
   const existing = records.filter(r => r.date === dateStr);
   if (existing.length > 0) {
@@ -531,12 +751,13 @@ window.onDateChange = function(dateStr) {
     fillTasksForDow(dow, null);
   }
 };
+
 // 記録済み表示（記録画面内）
 function showRecordedView(dateStr, dayRecords) {
-  const container = document.getElementById('subjects-container');
+  const list = document.getElementById('task-entry-list');
   const thuOption = document.getElementById('thu-option');
   if (thuOption) thuOption.style.display = 'none';
-  if (!container) return;
+  if (!list) return;
   const dowNames = ['日','月','火','水','木','金','土'];
   const dow = new Date(dateStr + 'T00:00:00').getDay();
   let html = `<div style="background:#e8f5ee;border:1.5px solid var(--accent2);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
@@ -546,25 +767,31 @@ function showRecordedView(dateStr, dayRecords) {
   dayRecords.forEach(r => {
     r.subjects.forEach(s => {
       const feelingEmoji = s.feeling != null ? FEELINGS[s.feeling] : '';
-      html += `<div class="subject-block" style="pointer-events:none;opacity:0.85;">
-        <div class="subject-block-header">
-          <div class="subject-num" style="background:var(--accent2);">✓</div>
-          <div class="subject-label">${s.subject} ${feelingEmoji}</div>
-        </div>`;
-      if (s.content) html += `<div style="font-size:13px;color:var(--text2);margin-bottom:6px;">📝 ${s.content}${s.minutes ? ` （${s.minutes}分）` : ''}</div>`;
-      if (s.memo) html += `<div style="font-size:12px;color:var(--text2);">💭 ${s.memo}</div>`;
-      html += `</div>`;
+      html += `<div class="task-entry-item filled" style="cursor:default;">
+        <div class="task-entry-icon">✅</div>
+        <div class="task-entry-body">
+          <div class="task-entry-name">${s.subject} ${feelingEmoji}</div>
+          ${s.content ? `<div class="task-entry-summary">${s.content}${s.minutes ? '・' + s.minutes + '分' : ''}</div>` : ''}
+          ${s.memo ? `<div class="task-entry-summary">💭 ${s.memo}</div>` : ''}
+        </div>
+      </div>`;
     });
     if (r.images && r.images.length) {
-      html += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">`;
+      html += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px;">`;
       r.images.forEach(img => {
         html += `<img src="${img}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);cursor:pointer" onclick="openImageModal('${img}')">`;
       });
       html += `</div>`;
     }
   });
-  container.innerHTML = html;
+  list.innerHTML = html;
+  // 送信ボタンを隠す
+  const submitBtn = document.querySelector('.btn-submit');
+  if (submitBtn) submitBtn.style.display = 'none';
+  const addBtn = document.querySelector('.btn-add');
+  if (addBtn) addBtn.style.display = 'none';
 }
+
 // 木曜の習い事モード切替
 window.setThuMode = function(mode) {
   const noBtn = document.getElementById('thu-no-btn');
@@ -577,128 +804,119 @@ window.setThuMode = function(mode) {
   noBtn.style.color = !isAri ? 'white' : '';
   fillTasksForDow(4, mode);
 };
+
 // 曜日＋木曜モードに応じてタスクを自動セット
 function fillTasksForDow(dow, thuMode) {
-  // コンテナをリセット
-  const container = document.getElementById('subjects-container');
-  if (!container) return;
-  container.innerHTML = '';
-  subjectCount = 0;
-  feelings = {};
-  // 曜日別タスク（name, content のヒント付き）
   const WEEKDAY_TASKS = {
-    0: [ // 日（休日）
-      { name: 'タンザム',     hint: '7:10〜' },
-      { name: '漢字',        hint: '7:50〜' },
-      { name: '数学',        hint: '8:10〜' },
-      { name: 'AI英会話',    hint: '9:10〜' },
-      { name: 'チャッピー英語', hint: '9:30〜' },
-      { name: '進研ゼミ',    hint: '9:40〜' },
+    0: [
+      { name: 'タンザム', hint: '7:10〜' }, { name: '漢字', hint: '7:50〜' },
+      { name: '数学', hint: '8:10〜' }, { name: 'AI英会話', hint: '9:10〜' },
+      { name: 'チャッピー英語', hint: '9:30〜' }, { name: '進研ゼミ', hint: '9:40〜' },
     ],
-    1: [ // 月
-      { name: 'タンザム',     hint: '6:10〜' },
-      { name: '漢字',        hint: '6:50〜' },
-      { name: '数学',        hint: '7:10〜' },
-      { name: 'AI英会話',    hint: '夕食前' },
-      { name: 'チャッピー英語', hint: '19:30〜' },
-      { name: '進研ゼミ',    hint: '19:50〜' },
+    1: [
+      { name: 'タンザム', hint: '6:10〜' }, { name: '漢字', hint: '6:50〜' },
+      { name: '数学', hint: '7:10〜' }, { name: 'AI英会話', hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '19:30〜' }, { name: '進研ゼミ', hint: '19:50〜' },
     ],
-    2: [ // 火
-      { name: 'タンザム',     hint: '6:10〜' },
-      { name: '漢字',        hint: '6:50〜' },
-      { name: '数学',        hint: '7:10〜' },
-      { name: 'AI英会話',    hint: '夕食前' },
-      { name: 'チャッピー英語', hint: '21:30〜' },
-      { name: '進研ゼミ',    hint: '21:50〜' },
+    2: [
+      { name: 'タンザム', hint: '6:10〜' }, { name: '漢字', hint: '6:50〜' },
+      { name: '数学', hint: '7:10〜' }, { name: 'AI英会話', hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '21:30〜' }, { name: '進研ゼミ', hint: '21:50〜' },
     ],
-    3: [ // 水
-      { name: 'タンザム',     hint: '6:10〜' },
-      { name: '漢字',        hint: '6:50〜' },
-      { name: '数学',        hint: '7:10〜' },
-      { name: 'AI英会話',    hint: '夕食前' },
-      { name: 'チャッピー英語', hint: '19:30〜' },
-      { name: '進研ゼミ',    hint: '19:50〜' },
+    3: [
+      { name: 'タンザム', hint: '6:10〜' }, { name: '漢字', hint: '6:50〜' },
+      { name: '数学', hint: '7:10〜' }, { name: 'AI英会話', hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '19:30〜' }, { name: '進研ゼミ', hint: '19:50〜' },
     ],
-    4: { // 木（thuMode で分岐）
+    4: {
       'なし': [
-        { name: 'タンザム',     hint: '6:10〜' },
-        { name: '漢字',        hint: '6:50〜' },
-        { name: '数学',        hint: '7:10〜' },
-        { name: 'AI英会話',    hint: '夕食前' },
-        { name: 'チャッピー英語', hint: '19:30〜' },
-        { name: '進研ゼミ',    hint: '19:50〜' },
+        { name: 'タンザム', hint: '6:10〜' }, { name: '漢字', hint: '6:50〜' },
+        { name: '数学', hint: '7:10〜' }, { name: 'AI英会話', hint: '夕食前' },
+        { name: 'チャッピー英語', hint: '19:30〜' }, { name: '進研ゼミ', hint: '19:50〜' },
       ],
       'あり': [
-        { name: 'タンザム',     hint: '6:10〜' },
-        { name: '漢字',        hint: '6:50〜' },
-        { name: '数学',        hint: '7:10〜' },
-        { name: 'AI英会話',    hint: '夕食前' },
-        { name: 'チャッピー英語', hint: '21:00〜' },
-        { name: '進研ゼミ',    hint: '21:20〜' },
+        { name: 'タンザム', hint: '6:10〜' }, { name: '漢字', hint: '6:50〜' },
+        { name: '数学', hint: '7:10〜' }, { name: 'AI英会話', hint: '夕食前' },
+        { name: 'チャッピー英語', hint: '21:00〜' }, { name: '進研ゼミ', hint: '21:20〜' },
       ],
     },
-    5: [ // 金
-      { name: 'タンザム',     hint: '6:10〜' },
-      { name: '漢字',        hint: '6:50〜' },
-      { name: '数学',        hint: '7:10〜' },
-      { name: 'AI英会話',    hint: '夕食前' },
-      { name: 'チャッピー英語', hint: '19:30〜' },
-      { name: '進研ゼミ',    hint: '19:50〜' },
+    5: [
+      { name: 'タンザム', hint: '6:10〜' }, { name: '漢字', hint: '6:50〜' },
+      { name: '数学', hint: '7:10〜' }, { name: 'AI英会話', hint: '夕食前' },
+      { name: 'チャッピー英語', hint: '19:30〜' }, { name: '進研ゼミ', hint: '19:50〜' },
     ],
-    6: [ // 土（休日）
-      { name: 'タンザム',     hint: '7:10〜' },
-      { name: '漢字',        hint: '7:50〜' },
-      { name: '数学',        hint: '8:10〜' },
-      { name: 'AI英会話',    hint: '9:10〜' },
-      { name: 'チャッピー英語', hint: '9:30〜' },
-      { name: '進研ゼミ',    hint: '9:40〜' },
+    6: [
+      { name: 'タンザム', hint: '7:10〜' }, { name: '漢字', hint: '7:50〜' },
+      { name: '数学', hint: '8:10〜' }, { name: 'AI英会話', hint: '9:10〜' },
+      { name: 'チャッピー英語', hint: '9:30〜' }, { name: '進研ゼミ', hint: '9:40〜' },
     ],
   };
-  let tasks = dow === 4
+  currentTasks = dow === 4
     ? (WEEKDAY_TASKS[4][thuMode] || WEEKDAY_TASKS[4]['あり'])
-    : WEEKDAY_TASKS[dow];
-  if (!tasks) { addSubject(); return; }
-  tasks.forEach(t => addSubjectWithName(t.name, t.hint));
+    : (WEEKDAY_TASKS[dow] || []);
+  renderTaskEntryList(currentTasks);
+  // 送信・追加ボタンを表示
+  const submitBtn = document.querySelector('.btn-submit');
+  if (submitBtn) submitBtn.style.display = '';
+  const addBtn = document.querySelector('.btn-add');
+  if (addBtn) addBtn.style.display = '';
 }
-window.addSubjectWithName = function(name, hint) {
-  subjectCount++;
-  const idx = subjectCount;
-  const div = document.createElement('div');
-  div.className = 'subject-block';
-  div.id = 'sub-' + idx;
-  div.innerHTML = `
-    <div class="subject-block-header">
-      <div class="subject-num">${idx}</div>
-      <div class="subject-label">${name}</div>
-    </div>
-    <button class="btn btn-danger btn-sm btn-delete-sub" onclick="removeSubject(${idx})">✕</button>
-    <div class="field"><label>教科</label>
-      <select id="subject-${idx}">
-        <option value="">選択</option>
-        ${SUBJECTS.map(s=>`<option${s===name?' selected':''}>${s}</option>`).join('')}
-      </select>
-    </div>
-    <div class="field" id="custom-wrap-${idx}" style="display:none">
-      <label>教科名を入力</label><input type="text" id="custom-${idx}" placeholder="例: 音楽">
-    </div>
-    <div class="field"><label>やったこと</label><input type="text" id="content-${idx}" placeholder="${hint || '例: ワーク3ページ'}"></div>
-    <div class="field"><label>勉強時間（分）</label><input type="number" id="minutes-${idx}" min="0" max="600" placeholder="例: 30"></div>
-    <div class="field"><label>達成感</label>
-      <div class="star-row" id="feeling-${idx}">
-        ${FEELINGS.map((f,i)=>`<button type="button" class="star-btn" onclick="setFeeling(${idx},${i})">${f}</button>`).join('')}
-      </div>
-    </div>
-    <div class="field"><label>感想</label><textarea id="memo-${idx}" placeholder="例: 難しかった、わかりやすかった"></textarea></div>`;
-  document.getElementById('subjects-container').appendChild(div);
-  document.getElementById('subject-'+idx).addEventListener('change', function() {
-    document.getElementById('custom-wrap-'+idx).style.display = this.value === 'その他' ? 'block' : 'none';
-  });
+
+// 項目パネルを開く
+window.openTaskPanel = function(name, hint) {
+  currentTaskName = name;
+  const data = taskInputs[name] || {};
+  document.getElementById('task-detail-title').textContent = '📝 ' + name + (hint ? '　' + hint : '');
+  document.getElementById('td-content').value = data.content || '';
+  document.getElementById('td-minutes').value = data.minutes || '';
+  document.getElementById('td-memo').value = data.memo || '';
+  currentTaskFeeling = data.feeling ?? null;
+  // 達成感ボタン描画
+  const row = document.getElementById('td-feeling-row');
+  row.innerHTML = FEELINGS.map((f,i) =>
+    `<button type="button" class="star-btn ${currentTaskFeeling != null && i <= currentTaskFeeling ? 'active' : ''}" onclick="setTaskFeeling(${i})">${f}</button>`
+  ).join('');
+  document.getElementById('task-detail-panel').classList.add('show');
 };
-window.addSubject = function() { addSubjectWithName('', ''); };
-window.removeSubject = function(idx) { document.getElementById('sub-'+idx)?.remove(); };
-window.setFeeling = function(idx, val) {
-  feelings[idx] = val;
-  document.querySelectorAll(`#feeling-${idx} .star-btn`).forEach((b,i) => b.classList.toggle('active', i <= val));
+
+window.setTaskFeeling = function(val) {
+  currentTaskFeeling = val;
+  document.querySelectorAll('#td-feeling-row .star-btn').forEach((b,i) => b.classList.toggle('active', i <= val));
+};
+
+window.closeTaskPanel = function(e) {
+  if (e && e.target !== document.getElementById('task-detail-panel')) return;
+  document.getElementById('task-detail-panel').classList.remove('show');
+};
+
+window.saveTaskDetail = function() {
+  if (!currentTaskName) return;
+  const content = document.getElementById('td-content').value.trim();
+  const minutes = parseInt(document.getElementById('td-minutes').value) || 0;
+  const memo = document.getElementById('td-memo').value.trim();
+  taskInputs[currentTaskName] = { content, minutes, feeling: currentTaskFeeling, memo };
+  document.getElementById('task-detail-panel').classList.remove('show');
+  renderTaskEntryList(currentTasks);
+};
+
+window.clearTaskDetail = function() {
+  if (!currentTaskName) return;
+  delete taskInputs[currentTaskName];
+  document.getElementById('task-detail-panel').classList.remove('show');
+  renderTaskEntryList(currentTasks);
+};
+
+// 手動追加（カスタム項目）
+window.addSubjectWithName = function(name, hint) {
+  if (!currentTasks.find(t => t.name === name)) {
+    currentTasks = [...currentTasks, { name: name || '新しい項目', hint: hint || '' }];
+  }
+  renderTaskEntryList(currentTasks);
+};
+window.addSubject = function() {
+  const name = prompt('教科名を入力してください');
+  if (!name || !name.trim()) return;
+  addSubjectWithName(name.trim(), '');
 };
 // ===== 画像処理 =====
 window.handleImages = async function(e) {
@@ -754,22 +972,14 @@ window.removePreview = function(idx) {
 window.submitRecord = async function() {
   const date = document.getElementById('date-input').value;
   if (!date) { showToast('日付を入力してください'); return; }
-  const blocks = document.querySelectorAll('.subject-block');
-  if (!blocks.length) { showToast('教科を追加してください'); return; }
-  const subjectsData = [];
-  for (const b of blocks) {
-    const idx = b.id.split('-')[1];
-    let subj = document.getElementById('subject-'+idx).value;
-    if (subj === 'その他') subj = document.getElementById('custom-'+idx).value || 'その他';
-    if (!subj) { showToast('教科を選択してください'); return; }
-    subjectsData.push({
-      subject: subj,
-      content: document.getElementById('content-'+idx).value,
-      minutes: parseInt(document.getElementById('minutes-'+idx).value) || 0,
-      feeling: feelings[idx] ?? null,
-      memo: document.getElementById('memo-'+idx).value,
-    });
-  }
+  const subjectsData = Object.entries(taskInputs).map(([name, data]) => ({
+    subject: name,
+    content: data.content || '',
+    minutes: data.minutes || 0,
+    feeling: data.feeling ?? null,
+    memo: data.memo || '',
+  }));
+  if (!subjectsData.length) { showToast('少なくとも1つ項目を入力してください'); return; }
   const images = pendingImages.map(i => i.dataUrl);
   const totalSize = JSON.stringify({ date, subjects: subjectsData, images }).length;
   if (totalSize > 900000) {
@@ -779,10 +989,8 @@ window.submitRecord = async function() {
   try {
     document.getElementById('sync-dot').className = 'sync-dot syncing';
     await addDoc(collection(db, "records"), { date, subjects: subjectsData, images, timestamp: serverTimestamp() });
-    document.getElementById('subjects-container').innerHTML = '';
-    subjectCount = 0; feelings = {}; pendingImages = [];
-    document.getElementById('date-input').value = getTodayStr();
-    addSubject();
+    taskInputs = {}; pendingImages = [];
+    buildForm();
     showToast('✅ 記録を保存しました！');
   } catch(e) { showToast('❌ 保存に失敗しました: ' + e.message); setError(); }
 };
